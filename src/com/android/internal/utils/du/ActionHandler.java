@@ -122,6 +122,7 @@ public class ActionHandler {
     public static final String SYSTEMUI_TASK_SOUNDMODE_VIB_SILENT = "task_soundmode_vib_silent";
     public static final String SYSTEMUI_TASK_WAKE_DEVICE = "task_wake_device";
     public static final String SYSTEMUI_TASK_STOP_SCREENPINNING = "task_stop_screenpinning";
+    public static final String SYSTEMUI_TASK_NOTIFICATION_CLEAR = "task_notification_clear";
 
     public static final String INTENT_SHOW_POWER_MENU = "action_handler_show_power_menu";
 //    public static final String INTENT_TOGGLE_SCREENRECORD = "action_handler_toggle_screenrecord";
@@ -156,8 +157,8 @@ public class ActionHandler {
         ImeArrowDown(SYSTEMUI_TASK_IME_NAVIGATION_DOWN, SYSTEMUI, "label_action_ime_down", "ic_sysbar_ime_down"),
         ImeArrowLeft(SYSTEMUI_TASK_IME_NAVIGATION_LEFT, SYSTEMUI, "label_action_ime_left", "ic_sysbar_ime_left"),
         ImeArrowRight(SYSTEMUI_TASK_IME_NAVIGATION_RIGHT, SYSTEMUI, "label_action_ime_right", "ic_sysbar_ime_right"),
-        ImeArrowUp(SYSTEMUI_TASK_IME_NAVIGATION_UP, SYSTEMUI, "label_action_ime_up", "ic_sysbar_ime_up");
-
+        ImeArrowUp(SYSTEMUI_TASK_IME_NAVIGATION_UP, SYSTEMUI, "label_action_ime_up", "ic_sysbar_ime_up"),
+        NotificationClear(SYSTEMUI_TASK_NOTIFICATION_CLEAR, SYSTEMUI, "label_action_notification_clear", "ic_qs_clear_notifications");
         String mAction;
         String mResPackage;
         String mLabelRes;
@@ -193,7 +194,8 @@ public class ActionHandler {
             SystemAction.Ime,
             SystemAction.StopScreenPinning, SystemAction.ImeArrowDown,
             SystemAction.ImeArrowLeft, SystemAction.ImeArrowRight,
-            SystemAction.ImeArrowUp, SystemAction.InAppSearch
+            SystemAction.ImeArrowUp, SystemAction.InAppSearch,
+            SystemAction.NotificationClear
     };
 
     public static class ActionIconResources {
@@ -360,6 +362,16 @@ public class ActionHandler {
             }
         }
 */
+
+        private static void clearAllNotifications() {
+            IStatusBarService service = getStatusBarService();
+            if (service != null) {
+                try {
+                    service.onClearAllNotifications(ActivityManager.getCurrentUser());
+                } catch (RemoteException e) {
+                }
+            }
+        }
     }
 
     public static void toggleRecentApps() {
@@ -566,6 +578,9 @@ public class ActionHandler {
                     }
                 }
             }
+            return;
+        } else if (action.equals(SYSTEMUI_TASK_NOTIFICATION_CLEAR)) {
+            StatusBarHelper.clearAllNotifications();
             return;
         }
     }
